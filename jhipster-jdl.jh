@@ -1,0 +1,68 @@
+enum DaysOfWeek {
+	MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY
+}
+ 
+enum TimeUnits {
+	DAY, WEEK, MONTH, YEAR
+}
+
+entity OrganizerUserProfile {
+}
+
+entity ParticipantUserProfile {
+}
+
+entity Schedule {
+	startDate ZonedDateTime required,
+    endDate ZonedDateTime
+}
+
+entity Location {
+	 latitude Long required,
+     longitude Long required
+}
+
+entity Event {
+    description Blob,
+    attachment String
+}
+
+entity DayOfWeek {
+	day DaysOfWeek required
+}
+
+entity TimeUnit {
+	unitTime TimeUnits required
+}
+
+entity Period {
+	interval Integer required
+}
+
+relationship OneToOne {
+	Event{organizer} to OrganizerUserProfile
+}
+
+relationship OneToOne {
+	Event{schedule} to Schedule
+}
+
+relationship OneToOne {
+	Event{location} to Location
+}
+
+relationship OneToOne {
+	Schedule{period} to Period
+}
+
+relationship OneToOne {
+	Period{timeUnit} to TimeUnit
+}
+
+relationship OneToMany {
+	Period{days} to DayOfWeek
+}
+
+relationship ManyToMany {
+	Event{participant} to ParticipantUserProfile
+}

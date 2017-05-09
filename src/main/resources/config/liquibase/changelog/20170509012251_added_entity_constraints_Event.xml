@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+    <!--
+        Added the constraints for entity Event.
+    -->
+    <changeSet id="20170509012251-2" author="jhipster">
+        
+        <addForeignKeyConstraint baseColumnNames="organizer_id"
+                                 baseTableName="event"
+                                 constraintName="fk_event_organizer_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="organizer_user_profile"/>
+
+        <addForeignKeyConstraint baseColumnNames="schedule_id"
+                                 baseTableName="event"
+                                 constraintName="fk_event_schedule_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="schedule"/>
+
+        <addForeignKeyConstraint baseColumnNames="location_id"
+                                 baseTableName="event"
+                                 constraintName="fk_event_location_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="location"/>
+
+        <addForeignKeyConstraint baseColumnNames="events_id"
+                                 baseTableName="event_participant"
+                                 constraintName="fk_event_participant_events_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="event"/>
+        <addForeignKeyConstraint baseColumnNames="participants_id"
+                                 baseTableName="event_participant"
+                                 constraintName="fk_event_participant_participants_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="participant_user_profile"/>
+        
+    </changeSet>
+</databaseChangeLog>

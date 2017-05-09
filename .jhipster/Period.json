@@ -1,0 +1,33 @@
+{
+    "fluentMethods": true,
+    "relationships": [
+        {
+            "relationshipType": "one-to-one",
+            "relationshipName": "timeUnit",
+            "otherEntityName": "timeUnit",
+            "otherEntityField": "id",
+            "ownerSide": true,
+            "otherEntityRelationshipName": "period"
+        },
+        {
+            "relationshipType": "one-to-many",
+            "relationshipName": "days",
+            "otherEntityName": "dayOfWeek",
+            "otherEntityRelationshipName": "period"
+        }
+    ],
+    "fields": [
+        {
+            "fieldName": "interval",
+            "fieldType": "Integer",
+            "fieldValidateRules": [
+                "required"
+            ]
+        }
+    ],
+    "changelogDate": "20170509012254",
+    "entityTableName": "period",
+    "dto": "no",
+    "pagination": "no",
+    "service": "no"
+}
