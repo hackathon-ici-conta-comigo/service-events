@@ -1,6 +1,8 @@
 package org.contacomigo.service.events.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import org.contacomigo.service.events.service.util.RandomUtil;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -22,8 +24,7 @@ public class Period implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id = RandomUtil.generateUUID();
 
     @NotNull
     @Column(name = "jhi_interval", nullable = false)
@@ -37,16 +38,16 @@ public class Period implements Serializable {
     @JsonIgnore
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<DayOfWeek> days = new HashSet<>();
+    
+    public String getId() {
+		return id;
+	}
 
-    public Long getId() {
-        return id;
-    }
+	public void setId(String id) {
+		this.id = id;
+	}
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Integer getInterval() {
+	public Integer getInterval() {
         return interval;
     }
 

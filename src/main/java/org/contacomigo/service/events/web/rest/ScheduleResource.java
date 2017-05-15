@@ -97,7 +97,7 @@ public class ScheduleResource {
      */
     @GetMapping("/schedules/{id}")
     @Timed
-    public ResponseEntity<Schedule> getSchedule(@PathVariable Long id) {
+    public ResponseEntity<Schedule> getSchedule(@PathVariable String id) {
         log.debug("REST request to get Schedule : {}", id);
         Schedule schedule = scheduleRepository.findOne(id);
         return ResponseUtil.wrapOrNotFound(Optional.ofNullable(schedule));
@@ -111,7 +111,7 @@ public class ScheduleResource {
      */
     @DeleteMapping("/schedules/{id}")
     @Timed
-    public ResponseEntity<Void> deleteSchedule(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteSchedule(@PathVariable String id) {
         log.debug("REST request to delete Schedule : {}", id);
         scheduleRepository.delete(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();

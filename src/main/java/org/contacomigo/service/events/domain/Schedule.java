@@ -1,13 +1,20 @@
 package org.contacomigo.service.events.domain;
 
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-
-import javax.persistence.*;
-import javax.validation.constraints.*;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
 import java.util.Objects;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+
+import org.contacomigo.service.events.service.util.RandomUtil;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 /**
  * A Schedule.
@@ -18,10 +25,9 @@ import java.util.Objects;
 public class Schedule implements Serializable {
 
     private static final long serialVersionUID = 1L;
-
+    
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id = RandomUtil.generateUUID();
 
     @NotNull
     @Column(name = "start_date", nullable = false)
@@ -33,16 +39,16 @@ public class Schedule implements Serializable {
     @OneToOne
     @JoinColumn(unique = true)
     private Period period;
+  
+    public String getId() {
+		return id;
+	}
 
-    public Long getId() {
-        return id;
-    }
+	public void setId(String id) {
+		this.id = id;
+	}
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public ZonedDateTime getStartDate() {
+	public ZonedDateTime getStartDate() {
         return startDate;
     }
 

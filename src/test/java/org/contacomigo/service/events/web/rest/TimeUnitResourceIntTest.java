@@ -113,7 +113,7 @@ public class TimeUnitResourceIntTest {
         int databaseSizeBeforeCreate = timeUnitRepository.findAll().size();
 
         // Create the TimeUnit with an existing ID
-        timeUnit.setId(1L);
+        timeUnit.setId("1");
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restTimeUnitMockMvc.perform(post("/api/time-units")
@@ -154,7 +154,7 @@ public class TimeUnitResourceIntTest {
         restTimeUnitMockMvc.perform(get("/api/time-units?sort=id,desc"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-            .andExpect(jsonPath("$.[*].id").value(hasItem(timeUnit.getId().intValue())))
+            .andExpect(jsonPath("$.[*].id").value(hasItem(timeUnit.getId())))
             .andExpect(jsonPath("$.[*].unitTime").value(hasItem(DEFAULT_UNIT_TIME.toString())));
     }
 
@@ -168,7 +168,7 @@ public class TimeUnitResourceIntTest {
         restTimeUnitMockMvc.perform(get("/api/time-units/{id}", timeUnit.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-            .andExpect(jsonPath("$.id").value(timeUnit.getId().intValue()))
+            .andExpect(jsonPath("$.id").value(timeUnit.getId()))
             .andExpect(jsonPath("$.unitTime").value(DEFAULT_UNIT_TIME.toString()));
     }
 

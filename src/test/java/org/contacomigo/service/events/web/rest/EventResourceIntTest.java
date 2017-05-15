@@ -122,7 +122,7 @@ public class EventResourceIntTest {
         int databaseSizeBeforeCreate = eventRepository.findAll().size();
 
         // Create the Event with an existing ID
-        event.setId(1L);
+        event.setId("1");
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restEventMockMvc.perform(post("/api/events")
@@ -145,7 +145,7 @@ public class EventResourceIntTest {
         restEventMockMvc.perform(get("/api/events?sort=id,desc"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-            .andExpect(jsonPath("$.[*].id").value(hasItem(event.getId().intValue())))
+            .andExpect(jsonPath("$.[*].id").value(hasItem(event.getId())))
             .andExpect(jsonPath("$.[*].descriptionContentType").value(hasItem(DEFAULT_DESCRIPTION_CONTENT_TYPE)))
             .andExpect(jsonPath("$.[*].description").value(hasItem(Base64Utils.encodeToString(DEFAULT_DESCRIPTION))))
             .andExpect(jsonPath("$.[*].attachment").value(hasItem(DEFAULT_ATTACHMENT.toString())));
@@ -161,7 +161,7 @@ public class EventResourceIntTest {
         restEventMockMvc.perform(get("/api/events/{id}", event.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-            .andExpect(jsonPath("$.id").value(event.getId().intValue()))
+            .andExpect(jsonPath("$.id").value(event.getId()))
             .andExpect(jsonPath("$.descriptionContentType").value(DEFAULT_DESCRIPTION_CONTENT_TYPE))
             .andExpect(jsonPath("$.description").value(Base64Utils.encodeToString(DEFAULT_DESCRIPTION)))
             .andExpect(jsonPath("$.attachment").value(DEFAULT_ATTACHMENT.toString()));

@@ -107,7 +107,7 @@ public class OrganizerUserProfileResourceIntTest {
         int databaseSizeBeforeCreate = organizerUserProfileRepository.findAll().size();
 
         // Create the OrganizerUserProfile with an existing ID
-        organizerUserProfile.setId(1L);
+        organizerUserProfile.setId("1");
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restOrganizerUserProfileMockMvc.perform(post("/api/organizer-user-profiles")
@@ -130,7 +130,7 @@ public class OrganizerUserProfileResourceIntTest {
         restOrganizerUserProfileMockMvc.perform(get("/api/organizer-user-profiles?sort=id,desc"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-            .andExpect(jsonPath("$.[*].id").value(hasItem(organizerUserProfile.getId().intValue())));
+            .andExpect(jsonPath("$.[*].id").value(hasItem(organizerUserProfile.getId())));
     }
 
     @Test
@@ -143,7 +143,7 @@ public class OrganizerUserProfileResourceIntTest {
         restOrganizerUserProfileMockMvc.perform(get("/api/organizer-user-profiles/{id}", organizerUserProfile.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-            .andExpect(jsonPath("$.id").value(organizerUserProfile.getId().intValue()));
+            .andExpect(jsonPath("$.id").value(organizerUserProfile.getId()));
     }
 
     @Test

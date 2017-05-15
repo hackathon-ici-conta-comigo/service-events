@@ -112,7 +112,7 @@ public class PeriodResourceIntTest {
         int databaseSizeBeforeCreate = periodRepository.findAll().size();
 
         // Create the Period with an existing ID
-        period.setId(1L);
+        period.setId("1");
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restPeriodMockMvc.perform(post("/api/periods")
@@ -153,7 +153,7 @@ public class PeriodResourceIntTest {
         restPeriodMockMvc.perform(get("/api/periods?sort=id,desc"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-            .andExpect(jsonPath("$.[*].id").value(hasItem(period.getId().intValue())))
+            .andExpect(jsonPath("$.[*].id").value(hasItem(period.getId())))
             .andExpect(jsonPath("$.[*].interval").value(hasItem(DEFAULT_INTERVAL)));
     }
 
@@ -167,7 +167,7 @@ public class PeriodResourceIntTest {
         restPeriodMockMvc.perform(get("/api/periods/{id}", period.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-            .andExpect(jsonPath("$.id").value(period.getId().intValue()))
+            .andExpect(jsonPath("$.id").value(period.getId()))
             .andExpect(jsonPath("$.interval").value(DEFAULT_INTERVAL));
     }
 

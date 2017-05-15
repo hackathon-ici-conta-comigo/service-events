@@ -1,14 +1,20 @@
 package org.contacomigo.service.events.domain;
 
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-
-import javax.persistence.*;
-import javax.validation.constraints.*;
 import java.io.Serializable;
-import java.util.Objects;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 import org.contacomigo.service.events.domain.enumeration.DaysOfWeek;
+import org.contacomigo.service.events.service.util.RandomUtil;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 /**
  * A DayOfWeek.
@@ -18,79 +24,84 @@ import org.contacomigo.service.events.domain.enumeration.DaysOfWeek;
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class DayOfWeek implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
+	
+	@Id
+	private String id;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+	@NotNull
+	@Enumerated(EnumType.STRING)
+	@Column(name = "day", nullable = false)
+	private DaysOfWeek day;
 
-    @NotNull
-    @Enumerated(EnumType.STRING)
-    @Column(name = "day", nullable = false)
-    private DaysOfWeek day;
+	@ManyToOne
+	private Period period;
+	
+	public String getId() {
+		return id;
+	}
 
-    @ManyToOne
-    private Period period;
+	public void setId(String id) {
+		this.id = id;
+	}
 
-    public Long getId() {
-        return id;
-    }
+	public DaysOfWeek getDay() {
+		return day;
+	}
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+	public DayOfWeek day(DaysOfWeek day) {
+		this.day = day;
+		return this;
+	}
 
-    public DaysOfWeek getDay() {
-        return day;
-    }
+	public void setDay(DaysOfWeek day) {
+		this.day = day;
+	}
 
-    public DayOfWeek day(DaysOfWeek day) {
-        this.day = day;
-        return this;
-    }
+	public Period getPeriod() {
+		return period;
+	}
 
-    public void setDay(DaysOfWeek day) {
-        this.day = day;
-    }
+	public DayOfWeek period(Period period) {
+		this.period = period;
+		return this;
+	}
 
-    public Period getPeriod() {
-        return period;
-    }
+	public void setPeriod(Period period) {
+		this.period = period;
+	}
 
-    public DayOfWeek period(Period period) {
-        this.period = period;
-        return this;
-    }
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((day == null) ? 0 : day.hashCode());
+		result = prime * result + ((period == null) ? 0 : period.hashCode());
+		return result;
+	}
 
-    public void setPeriod(Period period) {
-        this.period = period;
-    }
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		DayOfWeek other = (DayOfWeek) obj;
+		if (day != other.day)
+			return false;
+		if (period == null) {
+			if (other.period != null)
+				return false;
+		} else if (!period.equals(other.period))
+			return false;
+		return true;
+	}
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        DayOfWeek dayOfWeek = (DayOfWeek) o;
-        if (dayOfWeek.id == null || id == null) {
-            return false;
-        }
-        return Objects.equals(id, dayOfWeek.id);
-    }
+	@Override
+	public String toString() {
+		return "DayOfWeek [day=" + day + ", period=" + period + "]";
+	}
 
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(id);
-    }
-
-    @Override
-    public String toString() {
-        return "DayOfWeek{" +
-            "id=" + id +
-            ", day='" + day + "'" +
-            '}';
-    }
 }

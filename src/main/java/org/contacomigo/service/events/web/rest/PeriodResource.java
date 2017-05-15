@@ -97,7 +97,7 @@ public class PeriodResource {
      */
     @GetMapping("/periods/{id}")
     @Timed
-    public ResponseEntity<Period> getPeriod(@PathVariable Long id) {
+    public ResponseEntity<Period> getPeriod(@PathVariable String id) {
         log.debug("REST request to get Period : {}", id);
         Period period = periodRepository.findOne(id);
         return ResponseUtil.wrapOrNotFound(Optional.ofNullable(period));
@@ -111,7 +111,7 @@ public class PeriodResource {
      */
     @DeleteMapping("/periods/{id}")
     @Timed
-    public ResponseEntity<Void> deletePeriod(@PathVariable Long id) {
+    public ResponseEntity<Void> deletePeriod(@PathVariable String id) {
         log.debug("REST request to delete Period : {}", id);
         periodRepository.delete(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();

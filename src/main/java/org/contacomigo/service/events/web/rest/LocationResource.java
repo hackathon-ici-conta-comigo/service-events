@@ -97,7 +97,7 @@ public class LocationResource {
      */
     @GetMapping("/locations/{id}")
     @Timed
-    public ResponseEntity<Location> getLocation(@PathVariable Long id) {
+    public ResponseEntity<Location> getLocation(@PathVariable String id) {
         log.debug("REST request to get Location : {}", id);
         Location location = locationRepository.findOne(id);
         return ResponseUtil.wrapOrNotFound(Optional.ofNullable(location));
@@ -111,7 +111,7 @@ public class LocationResource {
      */
     @DeleteMapping("/locations/{id}")
     @Timed
-    public ResponseEntity<Void> deleteLocation(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteLocation(@PathVariable String id) {
         log.debug("REST request to delete Location : {}", id);
         locationRepository.delete(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();

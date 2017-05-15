@@ -97,7 +97,7 @@ public class TimeUnitResource {
      */
     @GetMapping("/time-units/{id}")
     @Timed
-    public ResponseEntity<TimeUnit> getTimeUnit(@PathVariable Long id) {
+    public ResponseEntity<TimeUnit> getTimeUnit(@PathVariable String id) {
         log.debug("REST request to get TimeUnit : {}", id);
         TimeUnit timeUnit = timeUnitRepository.findOne(id);
         return ResponseUtil.wrapOrNotFound(Optional.ofNullable(timeUnit));
@@ -111,7 +111,7 @@ public class TimeUnitResource {
      */
     @DeleteMapping("/time-units/{id}")
     @Timed
-    public ResponseEntity<Void> deleteTimeUnit(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteTimeUnit(@PathVariable String id) {
         log.debug("REST request to delete TimeUnit : {}", id);
         timeUnitRepository.delete(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();

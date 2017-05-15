@@ -96,7 +96,7 @@ public class ParticipantUserProfileResource {
      */
     @GetMapping("/participant-user-profiles/{id}")
     @Timed
-    public ResponseEntity<ParticipantUserProfile> getParticipantUserProfile(@PathVariable Long id) {
+    public ResponseEntity<ParticipantUserProfile> getParticipantUserProfile(@PathVariable String id) {
         log.debug("REST request to get ParticipantUserProfile : {}", id);
         ParticipantUserProfile participantUserProfile = participantUserProfileRepository.findOne(id);
         return ResponseUtil.wrapOrNotFound(Optional.ofNullable(participantUserProfile));
@@ -110,7 +110,7 @@ public class ParticipantUserProfileResource {
      */
     @DeleteMapping("/participant-user-profiles/{id}")
     @Timed
-    public ResponseEntity<Void> deleteParticipantUserProfile(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteParticipantUserProfile(@PathVariable String id) {
         log.debug("REST request to delete ParticipantUserProfile : {}", id);
         participantUserProfileRepository.delete(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
