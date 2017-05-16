@@ -10,6 +10,6 @@ import java.util.List;
  * Spring Data JPA repository for the TimeUnit entity.
  */
 @SuppressWarnings("unused")
-public interface TimeUnitRepository extends JpaRepository<TimeUnit,String> {
+public interface TimeUnitRepository extends JpaRepository<TimeUnit,Long> {
 
 }

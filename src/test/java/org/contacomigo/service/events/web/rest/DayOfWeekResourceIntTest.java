@@ -113,7 +113,7 @@ public class DayOfWeekResourceIntTest {
         int databaseSizeBeforeCreate = dayOfWeekRepository.findAll().size();
 
         // Create the DayOfWeek with an existing ID
-        dayOfWeek.setId("1");
+        dayOfWeek.setId(1L);
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restDayOfWeekMockMvc.perform(post("/api/day-of-weeks")
@@ -154,7 +154,7 @@ public class DayOfWeekResourceIntTest {
         restDayOfWeekMockMvc.perform(get("/api/day-of-weeks?sort=id,desc"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-            .andExpect(jsonPath("$.[*].id").value(hasItem(dayOfWeek.getId())))
+            .andExpect(jsonPath("$.[*].id").value(hasItem(dayOfWeek.getId().intValue())))
             .andExpect(jsonPath("$.[*].day").value(hasItem(DEFAULT_DAY.toString())));
     }
 
@@ -168,7 +168,7 @@ public class DayOfWeekResourceIntTest {
         restDayOfWeekMockMvc.perform(get("/api/day-of-weeks/{id}", dayOfWeek.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-            .andExpect(jsonPath("$.id").value(dayOfWeek.getId()))
+            .andExpect(jsonPath("$.id").value(dayOfWeek.getId().intValue()))
             .andExpect(jsonPath("$.day").value(DEFAULT_DAY.toString()));
     }
 

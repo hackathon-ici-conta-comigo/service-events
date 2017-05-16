@@ -10,6 +10,6 @@ import java.util.List;
  * Spring Data JPA repository for the Period entity.
  */
 @SuppressWarnings("unused")
-public interface PeriodRepository extends JpaRepository<Period,String> {
+public interface PeriodRepository extends JpaRepository<Period,Long> {
 
 }

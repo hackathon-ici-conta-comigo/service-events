@@ -10,6 +10,6 @@ import java.util.List;
  * Spring Data JPA repository for the DayOfWeek entity.
  */
 @SuppressWarnings("unused")
-public interface DayOfWeekRepository extends JpaRepository<DayOfWeek,String> {
+public interface DayOfWeekRepository extends JpaRepository<DayOfWeek,Long> {
 
 }

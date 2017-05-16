@@ -10,6 +10,6 @@ import java.util.List;
  * Spring Data JPA repository for the Schedule entity.
  */
 @SuppressWarnings("unused")
-public interface ScheduleRepository extends JpaRepository<Schedule,String> {
+public interface ScheduleRepository extends JpaRepository<Schedule,Long> {
 
 }

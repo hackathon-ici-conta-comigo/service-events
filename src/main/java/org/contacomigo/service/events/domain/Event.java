@@ -1,6 +1,5 @@
 package org.contacomigo.service.events.domain;
 
-import org.contacomigo.service.events.service.util.RandomUtil;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -21,7 +20,8 @@ public class Event implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
-    private String id = RandomUtil.generateUUID();
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @Lob
     @Column(name = "description")
@@ -52,15 +52,15 @@ public class Event implements Serializable {
                inverseJoinColumns = @JoinColumn(name="participants_id", referencedColumnName="id"))
     private Set<ParticipantUserProfile> participants = new HashSet<>();
 
-    public String getId() {
-		return id;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public void setId(String id) {
-		this.id = id;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public byte[] getDescription() {
+    public byte[] getDescription() {
         return description;
     }
 

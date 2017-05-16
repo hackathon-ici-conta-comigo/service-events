@@ -1,6 +1,5 @@
 package org.contacomigo.service.events.domain;
 
-import org.contacomigo.service.events.service.util.RandomUtil;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -20,7 +19,8 @@ public class Location implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
-    private String id = RandomUtil.generateUUID();
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @NotNull
     @Column(name = "latitude", nullable = false)
@@ -29,16 +29,16 @@ public class Location implements Serializable {
     @NotNull
     @Column(name = "longitude", nullable = false)
     private Long longitude;
-    
-    public String getId() {
-		return id;
-	}
 
-	public void setId(String id) {
-		this.id = id;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public Long getLatitude() {
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Long getLatitude() {
         return latitude;
     }
 

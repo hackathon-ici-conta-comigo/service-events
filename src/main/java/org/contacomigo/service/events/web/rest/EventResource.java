@@ -96,7 +96,7 @@ public class EventResource {
      */
     @GetMapping("/events/{id}")
     @Timed
-    public ResponseEntity<Event> getEvent(@PathVariable String id) {
+    public ResponseEntity<Event> getEvent(@PathVariable Long id) {
         log.debug("REST request to get Event : {}", id);
         Event event = eventRepository.findOneWithEagerRelationships(id);
         return ResponseUtil.wrapOrNotFound(Optional.ofNullable(event));
@@ -110,7 +110,7 @@ public class EventResource {
      */
     @DeleteMapping("/events/{id}")
     @Timed
-    public ResponseEntity<Void> deleteEvent(@PathVariable String id) {
+    public ResponseEntity<Void> deleteEvent(@PathVariable Long id) {
         log.debug("REST request to delete Event : {}", id);
         eventRepository.delete(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();

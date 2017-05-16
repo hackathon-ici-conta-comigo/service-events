@@ -117,7 +117,7 @@ public class LocationResourceIntTest {
         int databaseSizeBeforeCreate = locationRepository.findAll().size();
 
         // Create the Location with an existing ID
-        location.setId("1");
+        location.setId(1L);
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restLocationMockMvc.perform(post("/api/locations")
@@ -176,7 +176,7 @@ public class LocationResourceIntTest {
         restLocationMockMvc.perform(get("/api/locations?sort=id,desc"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-            .andExpect(jsonPath("$.[*].id").value(hasItem(location.getId())))
+            .andExpect(jsonPath("$.[*].id").value(hasItem(location.getId().intValue())))
             .andExpect(jsonPath("$.[*].latitude").value(hasItem(DEFAULT_LATITUDE.intValue())))
             .andExpect(jsonPath("$.[*].longitude").value(hasItem(DEFAULT_LONGITUDE.intValue())));
     }
@@ -191,7 +191,7 @@ public class LocationResourceIntTest {
         restLocationMockMvc.perform(get("/api/locations/{id}", location.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-            .andExpect(jsonPath("$.id").value(location.getId()))
+            .andExpect(jsonPath("$.id").value(location.getId().intValue()))
             .andExpect(jsonPath("$.latitude").value(DEFAULT_LATITUDE.intValue()))
             .andExpect(jsonPath("$.longitude").value(DEFAULT_LONGITUDE.intValue()));
     }

@@ -5,9 +5,6 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-
-import org.contacomigo.service.events.service.util.RandomUtil;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,11 +15,11 @@ import java.util.Map;
 @Entity
 @Table(name = "jhi_persistent_audit_event")
 public class PersistentAuditEvent implements Serializable {
-	private static final long serialVersionUID = 1L;
 
-	@Id
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "event_id")
-    private String id = RandomUtil.generateUUID();
+    private Long id;
 
     @NotNull
     @Column(nullable = false)
@@ -39,15 +36,15 @@ public class PersistentAuditEvent implements Serializable {
     @CollectionTable(name = "jhi_persistent_audit_evt_data", joinColumns=@JoinColumn(name="event_id"))
     private Map<String, String> data = new HashMap<>();
 
-    public String getId() {
-		return id;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public void setId(String id) {
-		this.id = id;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public String getPrincipal() {
+    public String getPrincipal() {
         return principal;
     }
 

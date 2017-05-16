@@ -107,7 +107,7 @@ public class ParticipantUserProfileResourceIntTest {
         int databaseSizeBeforeCreate = participantUserProfileRepository.findAll().size();
 
         // Create the ParticipantUserProfile with an existing ID
-        participantUserProfile.setId("1");
+        participantUserProfile.setId(1L);
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restParticipantUserProfileMockMvc.perform(post("/api/participant-user-profiles")
@@ -130,7 +130,7 @@ public class ParticipantUserProfileResourceIntTest {
         restParticipantUserProfileMockMvc.perform(get("/api/participant-user-profiles?sort=id,desc"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-            .andExpect(jsonPath("$.[*].id").value(hasItem(participantUserProfile.getId())));
+            .andExpect(jsonPath("$.[*].id").value(hasItem(participantUserProfile.getId().intValue())));
     }
 
     @Test
@@ -143,7 +143,7 @@ public class ParticipantUserProfileResourceIntTest {
         restParticipantUserProfileMockMvc.perform(get("/api/participant-user-profiles/{id}", participantUserProfile.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-            .andExpect(jsonPath("$.id").value(participantUserProfile.getId()));
+            .andExpect(jsonPath("$.id").value(participantUserProfile.getId().intValue()));
     }
 
     @Test

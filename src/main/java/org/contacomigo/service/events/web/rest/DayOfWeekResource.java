@@ -97,7 +97,7 @@ public class DayOfWeekResource {
      */
     @GetMapping("/day-of-weeks/{id}")
     @Timed
-    public ResponseEntity<DayOfWeek> getDayOfWeek(@PathVariable String id) {
+    public ResponseEntity<DayOfWeek> getDayOfWeek(@PathVariable Long id) {
         log.debug("REST request to get DayOfWeek : {}", id);
         DayOfWeek dayOfWeek = dayOfWeekRepository.findOne(id);
         return ResponseUtil.wrapOrNotFound(Optional.ofNullable(dayOfWeek));
@@ -111,7 +111,7 @@ public class DayOfWeekResource {
      */
     @DeleteMapping("/day-of-weeks/{id}")
     @Timed
-    public ResponseEntity<Void> deleteDayOfWeek(@PathVariable String id) {
+    public ResponseEntity<Void> deleteDayOfWeek(@PathVariable Long id) {
         log.debug("REST request to delete DayOfWeek : {}", id);
         dayOfWeekRepository.delete(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();

@@ -96,7 +96,7 @@ public class OrganizerUserProfileResource {
      */
     @GetMapping("/organizer-user-profiles/{id}")
     @Timed
-    public ResponseEntity<OrganizerUserProfile> getOrganizerUserProfile(@PathVariable String id) {
+    public ResponseEntity<OrganizerUserProfile> getOrganizerUserProfile(@PathVariable Long id) {
         log.debug("REST request to get OrganizerUserProfile : {}", id);
         OrganizerUserProfile organizerUserProfile = organizerUserProfileRepository.findOne(id);
         return ResponseUtil.wrapOrNotFound(Optional.ofNullable(organizerUserProfile));
@@ -110,7 +110,7 @@ public class OrganizerUserProfileResource {
      */
     @DeleteMapping("/organizer-user-profiles/{id}")
     @Timed
-    public ResponseEntity<Void> deleteOrganizerUserProfile(@PathVariable String id) {
+    public ResponseEntity<Void> deleteOrganizerUserProfile(@PathVariable Long id) {
         log.debug("REST request to delete OrganizerUserProfile : {}", id);
         organizerUserProfileRepository.delete(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();

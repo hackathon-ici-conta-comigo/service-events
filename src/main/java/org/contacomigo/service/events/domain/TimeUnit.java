@@ -9,7 +9,6 @@ import java.io.Serializable;
 import java.util.Objects;
 
 import org.contacomigo.service.events.domain.enumeration.TimeUnits;
-import org.contacomigo.service.events.service.util.RandomUtil;
 
 /**
  * A TimeUnit.
@@ -20,24 +19,25 @@ import org.contacomigo.service.events.service.util.RandomUtil;
 public class TimeUnit implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    
+
     @Id
-    private String id;
-    
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
     @NotNull
     @Enumerated(EnumType.STRING)
     @Column(name = "unit_time", nullable = false)
-    private TimeUnits unitTime;   
-	    
-    public String getId() {
-		return id;
-	}
+    private TimeUnits unitTime;
 
-	public void setId(String id) {
-		this.id = id;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public TimeUnits getUnitTime() {
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public TimeUnits getUnitTime() {
         return unitTime;
     }
 
@@ -50,31 +50,31 @@ public class TimeUnit implements Serializable {
         this.unitTime = unitTime;
     }
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((unitTime == null) ? 0 : unitTime.hashCode());
-		return result;
-	}
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        TimeUnit timeUnit = (TimeUnit) o;
+        if (timeUnit.id == null || id == null) {
+            return false;
+        }
+        return Objects.equals(id, timeUnit.id);
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		TimeUnit other = (TimeUnit) obj;
-		if (unitTime != other.unitTime)
-			return false;
-		return true;
-	}
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
+    }
 
-	@Override
-	public String toString() {
-		return "TimeUnit [unitTime=" + unitTime + "]";
-	}   
-    
+    @Override
+    public String toString() {
+        return "TimeUnit{" +
+            "id=" + id +
+            ", unitTime='" + unitTime + "'" +
+            '}';
+    }
 }
