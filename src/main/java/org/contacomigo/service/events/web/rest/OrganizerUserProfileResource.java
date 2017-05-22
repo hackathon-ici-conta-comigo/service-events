@@ -2,8 +2,7 @@ package org.contacomigo.service.events.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
 import org.contacomigo.service.events.domain.OrganizerUserProfile;
-
-import org.contacomigo.service.events.repository.OrganizerUserProfileRepository;
+import org.contacomigo.service.events.service.OrganizerUserProfileService;
 import org.contacomigo.service.events.web.rest.util.HeaderUtil;
 import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
@@ -27,10 +26,10 @@ public class OrganizerUserProfileResource {
 
     private static final String ENTITY_NAME = "organizerUserProfile";
         
-    private final OrganizerUserProfileRepository organizerUserProfileRepository;
+    private final OrganizerUserProfileService organizerUserProfileService;
 
-    public OrganizerUserProfileResource(OrganizerUserProfileRepository organizerUserProfileRepository) {
-        this.organizerUserProfileRepository = organizerUserProfileRepository;
+    public OrganizerUserProfileResource(OrganizerUserProfileService organizerUserProfileService) {
+        this.organizerUserProfileService = organizerUserProfileService;
     }
 
     /**
@@ -47,7 +46,7 @@ public class OrganizerUserProfileResource {
         if (organizerUserProfile.getId() != null) {
             return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(ENTITY_NAME, "idexists", "A new organizerUserProfile cannot already have an ID")).body(null);
         }
-        OrganizerUserProfile result = organizerUserProfileRepository.save(organizerUserProfile);
+        OrganizerUserProfile result = organizerUserProfileService.save(organizerUserProfile);
         return ResponseEntity.created(new URI("/api/organizer-user-profiles/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
             .body(result);
@@ -69,7 +68,7 @@ public class OrganizerUserProfileResource {
         if (organizerUserProfile.getId() == null) {
             return createOrganizerUserProfile(organizerUserProfile);
         }
-        OrganizerUserProfile result = organizerUserProfileRepository.save(organizerUserProfile);
+        OrganizerUserProfile result = organizerUserProfileService.save(organizerUserProfile);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, organizerUserProfile.getId().toString()))
             .body(result);
@@ -84,8 +83,7 @@ public class OrganizerUserProfileResource {
     @Timed
     public List<OrganizerUserProfile> getAllOrganizerUserProfiles() {
         log.debug("REST request to get all OrganizerUserProfiles");
-        List<OrganizerUserProfile> organizerUserProfiles = organizerUserProfileRepository.findAll();
-        return organizerUserProfiles;
+        return organizerUserProfileService.findAll();
     }
 
     /**
@@ -96,9 +94,9 @@ public class OrganizerUserProfileResource {
      */
     @GetMapping("/organizer-user-profiles/{id}")
     @Timed
-    public ResponseEntity<OrganizerUserProfile> getOrganizerUserProfile(@PathVariable Long id) {
+    public ResponseEntity<OrganizerUserProfile> getOrganizerUserProfile(@PathVariable String id) {
         log.debug("REST request to get OrganizerUserProfile : {}", id);
-        OrganizerUserProfile organizerUserProfile = organizerUserProfileRepository.findOne(id);
+        OrganizerUserProfile organizerUserProfile = organizerUserProfileService.findOne(id);
         return ResponseUtil.wrapOrNotFound(Optional.ofNullable(organizerUserProfile));
     }
 
@@ -110,9 +108,9 @@ public class OrganizerUserProfileResource {
      */
     @DeleteMapping("/organizer-user-profiles/{id}")
     @Timed
-    public ResponseEntity<Void> deleteOrganizerUserProfile(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteOrganizerUserProfile(@PathVariable String id) {
         log.debug("REST request to delete OrganizerUserProfile : {}", id);
-        organizerUserProfileRepository.delete(id);
+        organizerUserProfileService.delete(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
     }
 

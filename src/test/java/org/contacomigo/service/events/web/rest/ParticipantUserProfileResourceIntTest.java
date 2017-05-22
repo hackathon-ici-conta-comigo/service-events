@@ -6,6 +6,7 @@ import org.contacomigo.service.events.config.SecurityBeanOverrideConfiguration;
 
 import org.contacomigo.service.events.domain.ParticipantUserProfile;
 import org.contacomigo.service.events.repository.ParticipantUserProfileRepository;
+import org.contacomigo.service.events.service.ParticipantUserProfileService;
 import org.contacomigo.service.events.web.rest.errors.ExceptionTranslator;
 
 import org.junit.Before;
@@ -43,6 +44,9 @@ public class ParticipantUserProfileResourceIntTest {
     private ParticipantUserProfileRepository participantUserProfileRepository;
 
     @Autowired
+    private ParticipantUserProfileService participantUserProfileService;
+
+    @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
 
     @Autowired
@@ -61,7 +65,7 @@ public class ParticipantUserProfileResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        ParticipantUserProfileResource participantUserProfileResource = new ParticipantUserProfileResource(participantUserProfileRepository);
+        ParticipantUserProfileResource participantUserProfileResource = new ParticipantUserProfileResource(participantUserProfileService);
         this.restParticipantUserProfileMockMvc = MockMvcBuilders.standaloneSetup(participantUserProfileResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -107,7 +111,7 @@ public class ParticipantUserProfileResourceIntTest {
         int databaseSizeBeforeCreate = participantUserProfileRepository.findAll().size();
 
         // Create the ParticipantUserProfile with an existing ID
-        participantUserProfile.setId(1L);
+        participantUserProfile.setId("1");
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restParticipantUserProfileMockMvc.perform(post("/api/participant-user-profiles")
@@ -130,7 +134,7 @@ public class ParticipantUserProfileResourceIntTest {
         restParticipantUserProfileMockMvc.perform(get("/api/participant-user-profiles?sort=id,desc"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-            .andExpect(jsonPath("$.[*].id").value(hasItem(participantUserProfile.getId().intValue())));
+            .andExpect(jsonPath("$.[*].id").value(hasItem(participantUserProfile.getId())));
     }
 
     @Test
@@ -143,7 +147,7 @@ public class ParticipantUserProfileResourceIntTest {
         restParticipantUserProfileMockMvc.perform(get("/api/participant-user-profiles/{id}", participantUserProfile.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-            .andExpect(jsonPath("$.id").value(participantUserProfile.getId().intValue()));
+            .andExpect(jsonPath("$.id").value(participantUserProfile));
     }
 
     @Test
@@ -158,7 +162,8 @@ public class ParticipantUserProfileResourceIntTest {
     @Transactional
     public void updateParticipantUserProfile() throws Exception {
         // Initialize the database
-        participantUserProfileRepository.saveAndFlush(participantUserProfile);
+        participantUserProfileService.save(participantUserProfile);
+
         int databaseSizeBeforeUpdate = participantUserProfileRepository.findAll().size();
 
         // Update the participantUserProfile
@@ -197,7 +202,8 @@ public class ParticipantUserProfileResourceIntTest {
     @Transactional
     public void deleteParticipantUserProfile() throws Exception {
         // Initialize the database
-        participantUserProfileRepository.saveAndFlush(participantUserProfile);
+        participantUserProfileService.save(participantUserProfile);
+
         int databaseSizeBeforeDelete = participantUserProfileRepository.findAll().size();
 
         // Get the participantUserProfile

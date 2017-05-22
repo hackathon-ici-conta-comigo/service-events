@@ -22,5 +22,5 @@
     "entityTableName": "day_of_week",
     "dto": "no",
     "pagination": "no",
-    "service": "no"
+    "service": "serviceClass"
 }

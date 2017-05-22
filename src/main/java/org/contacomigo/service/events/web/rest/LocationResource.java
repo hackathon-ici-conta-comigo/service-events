@@ -2,8 +2,7 @@ package org.contacomigo.service.events.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
 import org.contacomigo.service.events.domain.Location;
-
-import org.contacomigo.service.events.repository.LocationRepository;
+import org.contacomigo.service.events.service.LocationService;
 import org.contacomigo.service.events.web.rest.util.HeaderUtil;
 import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
@@ -28,10 +27,10 @@ public class LocationResource {
 
     private static final String ENTITY_NAME = "location";
         
-    private final LocationRepository locationRepository;
+    private final LocationService locationService;
 
-    public LocationResource(LocationRepository locationRepository) {
-        this.locationRepository = locationRepository;
+    public LocationResource(LocationService locationService) {
+        this.locationService = locationService;
     }
 
     /**
@@ -48,7 +47,7 @@ public class LocationResource {
         if (location.getId() != null) {
             return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(ENTITY_NAME, "idexists", "A new location cannot already have an ID")).body(null);
         }
-        Location result = locationRepository.save(location);
+        Location result = locationService.save(location);
         return ResponseEntity.created(new URI("/api/locations/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
             .body(result);
@@ -70,7 +69,7 @@ public class LocationResource {
         if (location.getId() == null) {
             return createLocation(location);
         }
-        Location result = locationRepository.save(location);
+        Location result = locationService.save(location);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, location.getId().toString()))
             .body(result);
@@ -85,8 +84,7 @@ public class LocationResource {
     @Timed
     public List<Location> getAllLocations() {
         log.debug("REST request to get all Locations");
-        List<Location> locations = locationRepository.findAll();
-        return locations;
+        return locationService.findAll();
     }
 
     /**
@@ -97,9 +95,9 @@ public class LocationResource {
      */
     @GetMapping("/locations/{id}")
     @Timed
-    public ResponseEntity<Location> getLocation(@PathVariable Long id) {
+    public ResponseEntity<Location> getLocation(@PathVariable String id) {
         log.debug("REST request to get Location : {}", id);
-        Location location = locationRepository.findOne(id);
+        Location location = locationService.findOne(id);
         return ResponseUtil.wrapOrNotFound(Optional.ofNullable(location));
     }
 
@@ -111,9 +109,9 @@ public class LocationResource {
      */
     @DeleteMapping("/locations/{id}")
     @Timed
-    public ResponseEntity<Void> deleteLocation(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteLocation(@PathVariable String id) {
         log.debug("REST request to delete Location : {}", id);
-        locationRepository.delete(id);
+        locationService.delete(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
     }
 

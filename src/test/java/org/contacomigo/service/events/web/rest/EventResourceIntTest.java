@@ -6,6 +6,7 @@ import org.contacomigo.service.events.config.SecurityBeanOverrideConfiguration;
 
 import org.contacomigo.service.events.domain.Event;
 import org.contacomigo.service.events.repository.EventRepository;
+import org.contacomigo.service.events.service.EventService;
 import org.contacomigo.service.events.web.rest.errors.ExceptionTranslator;
 
 import org.junit.Before;
@@ -52,6 +53,9 @@ public class EventResourceIntTest {
     private EventRepository eventRepository;
 
     @Autowired
+    private EventService eventService;
+
+    @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
 
     @Autowired
@@ -70,7 +74,7 @@ public class EventResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        EventResource eventResource = new EventResource(eventRepository);
+        EventResource eventResource = new EventResource(eventService);
         this.restEventMockMvc = MockMvcBuilders.standaloneSetup(eventResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -122,7 +126,7 @@ public class EventResourceIntTest {
         int databaseSizeBeforeCreate = eventRepository.findAll().size();
 
         // Create the Event with an existing ID
-        event.setId(1L);
+        event.setId("1");
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restEventMockMvc.perform(post("/api/events")
@@ -145,7 +149,7 @@ public class EventResourceIntTest {
         restEventMockMvc.perform(get("/api/events?sort=id,desc"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-            .andExpect(jsonPath("$.[*].id").value(hasItem(event.getId().intValue())))
+            .andExpect(jsonPath("$.[*].id").value(hasItem(event.getId())))
             .andExpect(jsonPath("$.[*].descriptionContentType").value(hasItem(DEFAULT_DESCRIPTION_CONTENT_TYPE)))
             .andExpect(jsonPath("$.[*].description").value(hasItem(Base64Utils.encodeToString(DEFAULT_DESCRIPTION))))
             .andExpect(jsonPath("$.[*].attachment").value(hasItem(DEFAULT_ATTACHMENT.toString())));
@@ -161,7 +165,7 @@ public class EventResourceIntTest {
         restEventMockMvc.perform(get("/api/events/{id}", event.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-            .andExpect(jsonPath("$.id").value(event.getId().intValue()))
+            .andExpect(jsonPath("$.id").value(event.getId()))
             .andExpect(jsonPath("$.descriptionContentType").value(DEFAULT_DESCRIPTION_CONTENT_TYPE))
             .andExpect(jsonPath("$.description").value(Base64Utils.encodeToString(DEFAULT_DESCRIPTION)))
             .andExpect(jsonPath("$.attachment").value(DEFAULT_ATTACHMENT.toString()));
@@ -179,7 +183,8 @@ public class EventResourceIntTest {
     @Transactional
     public void updateEvent() throws Exception {
         // Initialize the database
-        eventRepository.saveAndFlush(event);
+        eventService.save(event);
+
         int databaseSizeBeforeUpdate = eventRepository.findAll().size();
 
         // Update the event
@@ -225,7 +230,8 @@ public class EventResourceIntTest {
     @Transactional
     public void deleteEvent() throws Exception {
         // Initialize the database
-        eventRepository.saveAndFlush(event);
+        eventService.save(event);
+
         int databaseSizeBeforeDelete = eventRepository.findAll().size();
 
         // Get the event

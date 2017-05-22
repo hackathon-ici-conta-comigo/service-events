@@ -6,6 +6,7 @@ import org.contacomigo.service.events.config.SecurityBeanOverrideConfiguration;
 
 import org.contacomigo.service.events.domain.Location;
 import org.contacomigo.service.events.repository.LocationRepository;
+import org.contacomigo.service.events.service.LocationService;
 import org.contacomigo.service.events.web.rest.errors.ExceptionTranslator;
 
 import org.junit.Before;
@@ -49,6 +50,9 @@ public class LocationResourceIntTest {
     private LocationRepository locationRepository;
 
     @Autowired
+    private LocationService locationService;
+
+    @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
 
     @Autowired
@@ -67,7 +71,7 @@ public class LocationResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        LocationResource locationResource = new LocationResource(locationRepository);
+        LocationResource locationResource = new LocationResource(locationService);
         this.restLocationMockMvc = MockMvcBuilders.standaloneSetup(locationResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -117,7 +121,7 @@ public class LocationResourceIntTest {
         int databaseSizeBeforeCreate = locationRepository.findAll().size();
 
         // Create the Location with an existing ID
-        location.setId(1L);
+        location.setId("1");
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restLocationMockMvc.perform(post("/api/locations")
@@ -176,7 +180,7 @@ public class LocationResourceIntTest {
         restLocationMockMvc.perform(get("/api/locations?sort=id,desc"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-            .andExpect(jsonPath("$.[*].id").value(hasItem(location.getId().intValue())))
+            .andExpect(jsonPath("$.[*].id").value(hasItem(location.getId())))
             .andExpect(jsonPath("$.[*].latitude").value(hasItem(DEFAULT_LATITUDE.intValue())))
             .andExpect(jsonPath("$.[*].longitude").value(hasItem(DEFAULT_LONGITUDE.intValue())));
     }
@@ -191,7 +195,7 @@ public class LocationResourceIntTest {
         restLocationMockMvc.perform(get("/api/locations/{id}", location.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-            .andExpect(jsonPath("$.id").value(location.getId().intValue()))
+            .andExpect(jsonPath("$.id").value(location.getId()))
             .andExpect(jsonPath("$.latitude").value(DEFAULT_LATITUDE.intValue()))
             .andExpect(jsonPath("$.longitude").value(DEFAULT_LONGITUDE.intValue()));
     }
@@ -208,7 +212,8 @@ public class LocationResourceIntTest {
     @Transactional
     public void updateLocation() throws Exception {
         // Initialize the database
-        locationRepository.saveAndFlush(location);
+        locationService.save(location);
+
         int databaseSizeBeforeUpdate = locationRepository.findAll().size();
 
         // Update the location
@@ -252,7 +257,8 @@ public class LocationResourceIntTest {
     @Transactional
     public void deleteLocation() throws Exception {
         // Initialize the database
-        locationRepository.saveAndFlush(location);
+        locationService.save(location);
+
         int databaseSizeBeforeDelete = locationRepository.findAll().size();
 
         // Get the location

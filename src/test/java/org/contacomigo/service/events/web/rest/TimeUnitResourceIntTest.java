@@ -6,6 +6,7 @@ import org.contacomigo.service.events.config.SecurityBeanOverrideConfiguration;
 
 import org.contacomigo.service.events.domain.TimeUnit;
 import org.contacomigo.service.events.repository.TimeUnitRepository;
+import org.contacomigo.service.events.service.TimeUnitService;
 import org.contacomigo.service.events.web.rest.errors.ExceptionTranslator;
 
 import org.junit.Before;
@@ -47,6 +48,9 @@ public class TimeUnitResourceIntTest {
     private TimeUnitRepository timeUnitRepository;
 
     @Autowired
+    private TimeUnitService timeUnitService;
+
+    @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
 
     @Autowired
@@ -65,7 +69,7 @@ public class TimeUnitResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        TimeUnitResource timeUnitResource = new TimeUnitResource(timeUnitRepository);
+        TimeUnitResource timeUnitResource = new TimeUnitResource(timeUnitService);
         this.restTimeUnitMockMvc = MockMvcBuilders.standaloneSetup(timeUnitResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -113,7 +117,7 @@ public class TimeUnitResourceIntTest {
         int databaseSizeBeforeCreate = timeUnitRepository.findAll().size();
 
         // Create the TimeUnit with an existing ID
-        timeUnit.setId(1L);
+        timeUnit.setId("1");
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restTimeUnitMockMvc.perform(post("/api/time-units")
@@ -154,7 +158,7 @@ public class TimeUnitResourceIntTest {
         restTimeUnitMockMvc.perform(get("/api/time-units?sort=id,desc"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-            .andExpect(jsonPath("$.[*].id").value(hasItem(timeUnit.getId().intValue())))
+            .andExpect(jsonPath("$.[*].id").value(hasItem(timeUnit.getId())))
             .andExpect(jsonPath("$.[*].unitTime").value(hasItem(DEFAULT_UNIT_TIME.toString())));
     }
 
@@ -168,7 +172,7 @@ public class TimeUnitResourceIntTest {
         restTimeUnitMockMvc.perform(get("/api/time-units/{id}", timeUnit.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-            .andExpect(jsonPath("$.id").value(timeUnit.getId().intValue()))
+            .andExpect(jsonPath("$.id").value(timeUnit.getId()))
             .andExpect(jsonPath("$.unitTime").value(DEFAULT_UNIT_TIME.toString()));
     }
 
@@ -184,7 +188,8 @@ public class TimeUnitResourceIntTest {
     @Transactional
     public void updateTimeUnit() throws Exception {
         // Initialize the database
-        timeUnitRepository.saveAndFlush(timeUnit);
+        timeUnitService.save(timeUnit);
+
         int databaseSizeBeforeUpdate = timeUnitRepository.findAll().size();
 
         // Update the timeUnit
@@ -226,7 +231,8 @@ public class TimeUnitResourceIntTest {
     @Transactional
     public void deleteTimeUnit() throws Exception {
         // Initialize the database
-        timeUnitRepository.saveAndFlush(timeUnit);
+        timeUnitService.save(timeUnit);
+
         int databaseSizeBeforeDelete = timeUnitRepository.findAll().size();
 
         // Get the timeUnit

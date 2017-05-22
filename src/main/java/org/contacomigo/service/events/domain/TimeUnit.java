@@ -21,19 +21,18 @@ public class TimeUnit implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
 
     @NotNull
     @Enumerated(EnumType.STRING)
     @Column(name = "unit_time", nullable = false)
     private TimeUnits unitTime;
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 

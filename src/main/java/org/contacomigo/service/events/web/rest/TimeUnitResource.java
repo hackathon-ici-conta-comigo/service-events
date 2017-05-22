@@ -2,8 +2,7 @@ package org.contacomigo.service.events.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
 import org.contacomigo.service.events.domain.TimeUnit;
-
-import org.contacomigo.service.events.repository.TimeUnitRepository;
+import org.contacomigo.service.events.service.TimeUnitService;
 import org.contacomigo.service.events.web.rest.util.HeaderUtil;
 import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
@@ -28,10 +27,10 @@ public class TimeUnitResource {
 
     private static final String ENTITY_NAME = "timeUnit";
         
-    private final TimeUnitRepository timeUnitRepository;
+    private final TimeUnitService timeUnitService;
 
-    public TimeUnitResource(TimeUnitRepository timeUnitRepository) {
-        this.timeUnitRepository = timeUnitRepository;
+    public TimeUnitResource(TimeUnitService timeUnitService) {
+        this.timeUnitService = timeUnitService;
     }
 
     /**
@@ -48,7 +47,7 @@ public class TimeUnitResource {
         if (timeUnit.getId() != null) {
             return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(ENTITY_NAME, "idexists", "A new timeUnit cannot already have an ID")).body(null);
         }
-        TimeUnit result = timeUnitRepository.save(timeUnit);
+        TimeUnit result = timeUnitService.save(timeUnit);
         return ResponseEntity.created(new URI("/api/time-units/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
             .body(result);
@@ -70,7 +69,7 @@ public class TimeUnitResource {
         if (timeUnit.getId() == null) {
             return createTimeUnit(timeUnit);
         }
-        TimeUnit result = timeUnitRepository.save(timeUnit);
+        TimeUnit result = timeUnitService.save(timeUnit);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, timeUnit.getId().toString()))
             .body(result);
@@ -85,8 +84,7 @@ public class TimeUnitResource {
     @Timed
     public List<TimeUnit> getAllTimeUnits() {
         log.debug("REST request to get all TimeUnits");
-        List<TimeUnit> timeUnits = timeUnitRepository.findAll();
-        return timeUnits;
+        return timeUnitService.findAll();
     }
 
     /**
@@ -97,9 +95,9 @@ public class TimeUnitResource {
      */
     @GetMapping("/time-units/{id}")
     @Timed
-    public ResponseEntity<TimeUnit> getTimeUnit(@PathVariable Long id) {
+    public ResponseEntity<TimeUnit> getTimeUnit(@PathVariable String id) {
         log.debug("REST request to get TimeUnit : {}", id);
-        TimeUnit timeUnit = timeUnitRepository.findOne(id);
+        TimeUnit timeUnit = timeUnitService.findOne(id);
         return ResponseUtil.wrapOrNotFound(Optional.ofNullable(timeUnit));
     }
 
@@ -111,9 +109,9 @@ public class TimeUnitResource {
      */
     @DeleteMapping("/time-units/{id}")
     @Timed
-    public ResponseEntity<Void> deleteTimeUnit(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteTimeUnit(@PathVariable String id) {
         log.debug("REST request to delete TimeUnit : {}", id);
-        timeUnitRepository.delete(id);
+        timeUnitService.delete(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
     }
 

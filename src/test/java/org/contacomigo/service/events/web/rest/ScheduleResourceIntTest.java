@@ -6,6 +6,7 @@ import org.contacomigo.service.events.config.SecurityBeanOverrideConfiguration;
 
 import org.contacomigo.service.events.domain.Schedule;
 import org.contacomigo.service.events.repository.ScheduleRepository;
+import org.contacomigo.service.events.service.ScheduleService;
 import org.contacomigo.service.events.web.rest.errors.ExceptionTranslator;
 
 import org.junit.Before;
@@ -54,6 +55,9 @@ public class ScheduleResourceIntTest {
     private ScheduleRepository scheduleRepository;
 
     @Autowired
+    private ScheduleService scheduleService;
+
+    @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
 
     @Autowired
@@ -72,7 +76,7 @@ public class ScheduleResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        ScheduleResource scheduleResource = new ScheduleResource(scheduleRepository);
+        ScheduleResource scheduleResource = new ScheduleResource(scheduleService);
         this.restScheduleMockMvc = MockMvcBuilders.standaloneSetup(scheduleResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -122,7 +126,7 @@ public class ScheduleResourceIntTest {
         int databaseSizeBeforeCreate = scheduleRepository.findAll().size();
 
         // Create the Schedule with an existing ID
-        schedule.setId(1L);
+        schedule.setId("1");
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restScheduleMockMvc.perform(post("/api/schedules")
@@ -163,7 +167,7 @@ public class ScheduleResourceIntTest {
         restScheduleMockMvc.perform(get("/api/schedules?sort=id,desc"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-            .andExpect(jsonPath("$.[*].id").value(hasItem(schedule.getId().intValue())))
+            .andExpect(jsonPath("$.[*].id").value(hasItem(schedule.getId())))
             .andExpect(jsonPath("$.[*].startDate").value(hasItem(sameInstant(DEFAULT_START_DATE))))
             .andExpect(jsonPath("$.[*].endDate").value(hasItem(sameInstant(DEFAULT_END_DATE))));
     }
@@ -178,7 +182,7 @@ public class ScheduleResourceIntTest {
         restScheduleMockMvc.perform(get("/api/schedules/{id}", schedule.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-            .andExpect(jsonPath("$.id").value(schedule.getId().intValue()))
+            .andExpect(jsonPath("$.id").value(schedule.getId()))
             .andExpect(jsonPath("$.startDate").value(sameInstant(DEFAULT_START_DATE)))
             .andExpect(jsonPath("$.endDate").value(sameInstant(DEFAULT_END_DATE)));
     }
@@ -195,7 +199,8 @@ public class ScheduleResourceIntTest {
     @Transactional
     public void updateSchedule() throws Exception {
         // Initialize the database
-        scheduleRepository.saveAndFlush(schedule);
+        scheduleService.save(schedule);
+
         int databaseSizeBeforeUpdate = scheduleRepository.findAll().size();
 
         // Update the schedule
@@ -239,7 +244,8 @@ public class ScheduleResourceIntTest {
     @Transactional
     public void deleteSchedule() throws Exception {
         // Initialize the database
-        scheduleRepository.saveAndFlush(schedule);
+        scheduleService.save(schedule);
+
         int databaseSizeBeforeDelete = scheduleRepository.findAll().size();
 
         // Get the schedule

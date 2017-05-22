@@ -2,8 +2,7 @@ package org.contacomigo.service.events.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
 import org.contacomigo.service.events.domain.ParticipantUserProfile;
-
-import org.contacomigo.service.events.repository.ParticipantUserProfileRepository;
+import org.contacomigo.service.events.service.ParticipantUserProfileService;
 import org.contacomigo.service.events.web.rest.util.HeaderUtil;
 import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
@@ -27,10 +26,10 @@ public class ParticipantUserProfileResource {
 
     private static final String ENTITY_NAME = "participantUserProfile";
         
-    private final ParticipantUserProfileRepository participantUserProfileRepository;
+    private final ParticipantUserProfileService participantUserProfileService;
 
-    public ParticipantUserProfileResource(ParticipantUserProfileRepository participantUserProfileRepository) {
-        this.participantUserProfileRepository = participantUserProfileRepository;
+    public ParticipantUserProfileResource(ParticipantUserProfileService participantUserProfileService) {
+        this.participantUserProfileService = participantUserProfileService;
     }
 
     /**
@@ -47,7 +46,7 @@ public class ParticipantUserProfileResource {
         if (participantUserProfile.getId() != null) {
             return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(ENTITY_NAME, "idexists", "A new participantUserProfile cannot already have an ID")).body(null);
         }
-        ParticipantUserProfile result = participantUserProfileRepository.save(participantUserProfile);
+        ParticipantUserProfile result = participantUserProfileService.save(participantUserProfile);
         return ResponseEntity.created(new URI("/api/participant-user-profiles/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
             .body(result);
@@ -69,7 +68,7 @@ public class ParticipantUserProfileResource {
         if (participantUserProfile.getId() == null) {
             return createParticipantUserProfile(participantUserProfile);
         }
-        ParticipantUserProfile result = participantUserProfileRepository.save(participantUserProfile);
+        ParticipantUserProfile result = participantUserProfileService.save(participantUserProfile);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, participantUserProfile.getId().toString()))
             .body(result);
@@ -84,8 +83,7 @@ public class ParticipantUserProfileResource {
     @Timed
     public List<ParticipantUserProfile> getAllParticipantUserProfiles() {
         log.debug("REST request to get all ParticipantUserProfiles");
-        List<ParticipantUserProfile> participantUserProfiles = participantUserProfileRepository.findAll();
-        return participantUserProfiles;
+        return participantUserProfileService.findAll();
     }
 
     /**
@@ -96,9 +94,9 @@ public class ParticipantUserProfileResource {
      */
     @GetMapping("/participant-user-profiles/{id}")
     @Timed
-    public ResponseEntity<ParticipantUserProfile> getParticipantUserProfile(@PathVariable Long id) {
+    public ResponseEntity<ParticipantUserProfile> getParticipantUserProfile(@PathVariable String id) {
         log.debug("REST request to get ParticipantUserProfile : {}", id);
-        ParticipantUserProfile participantUserProfile = participantUserProfileRepository.findOne(id);
+        ParticipantUserProfile participantUserProfile = participantUserProfileService.findOne(id);
         return ResponseUtil.wrapOrNotFound(Optional.ofNullable(participantUserProfile));
     }
 
@@ -110,9 +108,9 @@ public class ParticipantUserProfileResource {
      */
     @DeleteMapping("/participant-user-profiles/{id}")
     @Timed
-    public ResponseEntity<Void> deleteParticipantUserProfile(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteParticipantUserProfile(@PathVariable String id) {
         log.debug("REST request to delete ParticipantUserProfile : {}", id);
-        participantUserProfileRepository.delete(id);
+        participantUserProfileService.delete(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
     }
 

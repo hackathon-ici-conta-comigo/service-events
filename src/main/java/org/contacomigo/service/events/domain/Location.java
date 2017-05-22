@@ -19,8 +19,7 @@ public class Location implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
 
     @NotNull
     @Column(name = "latitude", nullable = false)
@@ -30,11 +29,11 @@ public class Location implements Serializable {
     @Column(name = "longitude", nullable = false)
     private Long longitude;
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 

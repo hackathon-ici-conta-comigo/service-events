@@ -20,8 +20,7 @@ public class Event implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
 
     @Lob
     @Column(name = "description")
@@ -52,11 +51,11 @@ public class Event implements Serializable {
                inverseJoinColumns = @JoinColumn(name="participants_id", referencedColumnName="id"))
     private Set<ParticipantUserProfile> participants = new HashSet<>();
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 

@@ -10,6 +10,6 @@ import java.util.List;
  * Spring Data JPA repository for the OrganizerUserProfile entity.
  */
 @SuppressWarnings("unused")
-public interface OrganizerUserProfileRepository extends JpaRepository<OrganizerUserProfile,Long> {
+public interface OrganizerUserProfileRepository extends JpaRepository<OrganizerUserProfile,String> {
 
 }

@@ -6,6 +6,7 @@ import org.contacomigo.service.events.config.SecurityBeanOverrideConfiguration;
 
 import org.contacomigo.service.events.domain.OrganizerUserProfile;
 import org.contacomigo.service.events.repository.OrganizerUserProfileRepository;
+import org.contacomigo.service.events.service.OrganizerUserProfileService;
 import org.contacomigo.service.events.web.rest.errors.ExceptionTranslator;
 
 import org.junit.Before;
@@ -43,6 +44,9 @@ public class OrganizerUserProfileResourceIntTest {
     private OrganizerUserProfileRepository organizerUserProfileRepository;
 
     @Autowired
+    private OrganizerUserProfileService organizerUserProfileService;
+
+    @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
 
     @Autowired
@@ -61,7 +65,7 @@ public class OrganizerUserProfileResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        OrganizerUserProfileResource organizerUserProfileResource = new OrganizerUserProfileResource(organizerUserProfileRepository);
+        OrganizerUserProfileResource organizerUserProfileResource = new OrganizerUserProfileResource(organizerUserProfileService);
         this.restOrganizerUserProfileMockMvc = MockMvcBuilders.standaloneSetup(organizerUserProfileResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -107,7 +111,7 @@ public class OrganizerUserProfileResourceIntTest {
         int databaseSizeBeforeCreate = organizerUserProfileRepository.findAll().size();
 
         // Create the OrganizerUserProfile with an existing ID
-        organizerUserProfile.setId(1L);
+        organizerUserProfile.setId("1");
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restOrganizerUserProfileMockMvc.perform(post("/api/organizer-user-profiles")
@@ -130,7 +134,7 @@ public class OrganizerUserProfileResourceIntTest {
         restOrganizerUserProfileMockMvc.perform(get("/api/organizer-user-profiles?sort=id,desc"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-            .andExpect(jsonPath("$.[*].id").value(hasItem(organizerUserProfile.getId().intValue())));
+            .andExpect(jsonPath("$.[*].id").value(hasItem(organizerUserProfile.getId())));
     }
 
     @Test
@@ -143,7 +147,7 @@ public class OrganizerUserProfileResourceIntTest {
         restOrganizerUserProfileMockMvc.perform(get("/api/organizer-user-profiles/{id}", organizerUserProfile.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-            .andExpect(jsonPath("$.id").value(organizerUserProfile.getId().intValue()));
+            .andExpect(jsonPath("$.id").value(organizerUserProfile.getId()));
     }
 
     @Test
@@ -158,7 +162,8 @@ public class OrganizerUserProfileResourceIntTest {
     @Transactional
     public void updateOrganizerUserProfile() throws Exception {
         // Initialize the database
-        organizerUserProfileRepository.saveAndFlush(organizerUserProfile);
+        organizerUserProfileService.save(organizerUserProfile);
+
         int databaseSizeBeforeUpdate = organizerUserProfileRepository.findAll().size();
 
         // Update the organizerUserProfile
@@ -197,7 +202,8 @@ public class OrganizerUserProfileResourceIntTest {
     @Transactional
     public void deleteOrganizerUserProfile() throws Exception {
         // Initialize the database
-        organizerUserProfileRepository.saveAndFlush(organizerUserProfile);
+        organizerUserProfileService.save(organizerUserProfile);
+
         int databaseSizeBeforeDelete = organizerUserProfileRepository.findAll().size();
 
         // Get the organizerUserProfile

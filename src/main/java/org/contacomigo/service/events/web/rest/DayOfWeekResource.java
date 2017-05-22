@@ -2,8 +2,7 @@ package org.contacomigo.service.events.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
 import org.contacomigo.service.events.domain.DayOfWeek;
-
-import org.contacomigo.service.events.repository.DayOfWeekRepository;
+import org.contacomigo.service.events.service.DayOfWeekService;
 import org.contacomigo.service.events.web.rest.util.HeaderUtil;
 import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
@@ -28,10 +27,10 @@ public class DayOfWeekResource {
 
     private static final String ENTITY_NAME = "dayOfWeek";
         
-    private final DayOfWeekRepository dayOfWeekRepository;
+    private final DayOfWeekService dayOfWeekService;
 
-    public DayOfWeekResource(DayOfWeekRepository dayOfWeekRepository) {
-        this.dayOfWeekRepository = dayOfWeekRepository;
+    public DayOfWeekResource(DayOfWeekService dayOfWeekService) {
+        this.dayOfWeekService = dayOfWeekService;
     }
 
     /**
@@ -48,7 +47,7 @@ public class DayOfWeekResource {
         if (dayOfWeek.getId() != null) {
             return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(ENTITY_NAME, "idexists", "A new dayOfWeek cannot already have an ID")).body(null);
         }
-        DayOfWeek result = dayOfWeekRepository.save(dayOfWeek);
+        DayOfWeek result = dayOfWeekService.save(dayOfWeek);
         return ResponseEntity.created(new URI("/api/day-of-weeks/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
             .body(result);
@@ -70,7 +69,7 @@ public class DayOfWeekResource {
         if (dayOfWeek.getId() == null) {
             return createDayOfWeek(dayOfWeek);
         }
-        DayOfWeek result = dayOfWeekRepository.save(dayOfWeek);
+        DayOfWeek result = dayOfWeekService.save(dayOfWeek);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, dayOfWeek.getId().toString()))
             .body(result);
@@ -85,8 +84,7 @@ public class DayOfWeekResource {
     @Timed
     public List<DayOfWeek> getAllDayOfWeeks() {
         log.debug("REST request to get all DayOfWeeks");
-        List<DayOfWeek> dayOfWeeks = dayOfWeekRepository.findAll();
-        return dayOfWeeks;
+        return dayOfWeekService.findAll();
     }
 
     /**
@@ -97,9 +95,9 @@ public class DayOfWeekResource {
      */
     @GetMapping("/day-of-weeks/{id}")
     @Timed
-    public ResponseEntity<DayOfWeek> getDayOfWeek(@PathVariable Long id) {
+    public ResponseEntity<DayOfWeek> getDayOfWeek(@PathVariable String id) {
         log.debug("REST request to get DayOfWeek : {}", id);
-        DayOfWeek dayOfWeek = dayOfWeekRepository.findOne(id);
+        DayOfWeek dayOfWeek = dayOfWeekService.findOne(id);
         return ResponseUtil.wrapOrNotFound(Optional.ofNullable(dayOfWeek));
     }
 
@@ -111,9 +109,9 @@ public class DayOfWeekResource {
      */
     @DeleteMapping("/day-of-weeks/{id}")
     @Timed
-    public ResponseEntity<Void> deleteDayOfWeek(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteDayOfWeek(@PathVariable String id) {
         log.debug("REST request to delete DayOfWeek : {}", id);
-        dayOfWeekRepository.delete(id);
+        dayOfWeekService.delete(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
     }
 

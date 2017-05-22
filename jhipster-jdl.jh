@@ -66,5 +66,4 @@ relationship OneToMany {
 relationship ManyToMany {
 	Event{participant} to ParticipantUserProfile
 }
-
-service all with ServiceClass
+service all with serviceClass

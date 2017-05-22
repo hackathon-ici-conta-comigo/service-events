@@ -2,8 +2,7 @@ package org.contacomigo.service.events.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
 import org.contacomigo.service.events.domain.Event;
-
-import org.contacomigo.service.events.repository.EventRepository;
+import org.contacomigo.service.events.service.EventService;
 import org.contacomigo.service.events.web.rest.util.HeaderUtil;
 import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
@@ -27,10 +26,10 @@ public class EventResource {
 
     private static final String ENTITY_NAME = "event";
         
-    private final EventRepository eventRepository;
+    private final EventService eventService;
 
-    public EventResource(EventRepository eventRepository) {
-        this.eventRepository = eventRepository;
+    public EventResource(EventService eventService) {
+        this.eventService = eventService;
     }
 
     /**
@@ -47,7 +46,7 @@ public class EventResource {
         if (event.getId() != null) {
             return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(ENTITY_NAME, "idexists", "A new event cannot already have an ID")).body(null);
         }
-        Event result = eventRepository.save(event);
+        Event result = eventService.save(event);
         return ResponseEntity.created(new URI("/api/events/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
             .body(result);
@@ -69,7 +68,7 @@ public class EventResource {
         if (event.getId() == null) {
             return createEvent(event);
         }
-        Event result = eventRepository.save(event);
+        Event result = eventService.save(event);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, event.getId().toString()))
             .body(result);
@@ -84,8 +83,7 @@ public class EventResource {
     @Timed
     public List<Event> getAllEvents() {
         log.debug("REST request to get all Events");
-        List<Event> events = eventRepository.findAllWithEagerRelationships();
-        return events;
+        return eventService.findAll();
     }
 
     /**
@@ -96,9 +94,9 @@ public class EventResource {
      */
     @GetMapping("/events/{id}")
     @Timed
-    public ResponseEntity<Event> getEvent(@PathVariable Long id) {
+    public ResponseEntity<Event> getEvent(@PathVariable String id) {
         log.debug("REST request to get Event : {}", id);
-        Event event = eventRepository.findOneWithEagerRelationships(id);
+        Event event = eventService.findOne(id);
         return ResponseUtil.wrapOrNotFound(Optional.ofNullable(event));
     }
 
@@ -110,9 +108,9 @@ public class EventResource {
      */
     @DeleteMapping("/events/{id}")
     @Timed
-    public ResponseEntity<Void> deleteEvent(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteEvent(@PathVariable String id) {
         log.debug("REST request to delete Event : {}", id);
-        eventRepository.delete(id);
+        eventService.delete(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
     }
 

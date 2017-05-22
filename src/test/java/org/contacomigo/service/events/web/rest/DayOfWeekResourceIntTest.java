@@ -6,6 +6,7 @@ import org.contacomigo.service.events.config.SecurityBeanOverrideConfiguration;
 
 import org.contacomigo.service.events.domain.DayOfWeek;
 import org.contacomigo.service.events.repository.DayOfWeekRepository;
+import org.contacomigo.service.events.service.DayOfWeekService;
 import org.contacomigo.service.events.web.rest.errors.ExceptionTranslator;
 
 import org.junit.Before;
@@ -47,6 +48,9 @@ public class DayOfWeekResourceIntTest {
     private DayOfWeekRepository dayOfWeekRepository;
 
     @Autowired
+    private DayOfWeekService dayOfWeekService;
+
+    @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
 
     @Autowired
@@ -65,7 +69,7 @@ public class DayOfWeekResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        DayOfWeekResource dayOfWeekResource = new DayOfWeekResource(dayOfWeekRepository);
+        DayOfWeekResource dayOfWeekResource = new DayOfWeekResource(dayOfWeekService);
         this.restDayOfWeekMockMvc = MockMvcBuilders.standaloneSetup(dayOfWeekResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -113,7 +117,7 @@ public class DayOfWeekResourceIntTest {
         int databaseSizeBeforeCreate = dayOfWeekRepository.findAll().size();
 
         // Create the DayOfWeek with an existing ID
-        dayOfWeek.setId(1L);
+        dayOfWeek.setId("1");
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restDayOfWeekMockMvc.perform(post("/api/day-of-weeks")
@@ -154,7 +158,7 @@ public class DayOfWeekResourceIntTest {
         restDayOfWeekMockMvc.perform(get("/api/day-of-weeks?sort=id,desc"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-            .andExpect(jsonPath("$.[*].id").value(hasItem(dayOfWeek.getId().intValue())))
+            .andExpect(jsonPath("$.[*].id").value(hasItem(dayOfWeek.getId())))
             .andExpect(jsonPath("$.[*].day").value(hasItem(DEFAULT_DAY.toString())));
     }
 
@@ -168,7 +172,7 @@ public class DayOfWeekResourceIntTest {
         restDayOfWeekMockMvc.perform(get("/api/day-of-weeks/{id}", dayOfWeek.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-            .andExpect(jsonPath("$.id").value(dayOfWeek.getId().intValue()))
+            .andExpect(jsonPath("$.id").value(dayOfWeek.getId()))
             .andExpect(jsonPath("$.day").value(DEFAULT_DAY.toString()));
     }
 
@@ -184,7 +188,8 @@ public class DayOfWeekResourceIntTest {
     @Transactional
     public void updateDayOfWeek() throws Exception {
         // Initialize the database
-        dayOfWeekRepository.saveAndFlush(dayOfWeek);
+        dayOfWeekService.save(dayOfWeek);
+
         int databaseSizeBeforeUpdate = dayOfWeekRepository.findAll().size();
 
         // Update the dayOfWeek
@@ -226,7 +231,8 @@ public class DayOfWeekResourceIntTest {
     @Transactional
     public void deleteDayOfWeek() throws Exception {
         // Initialize the database
-        dayOfWeekRepository.saveAndFlush(dayOfWeek);
+        dayOfWeekService.save(dayOfWeek);
+
         int databaseSizeBeforeDelete = dayOfWeekRepository.findAll().size();
 
         // Get the dayOfWeek

@@ -2,8 +2,7 @@ package org.contacomigo.service.events.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
 import org.contacomigo.service.events.domain.Schedule;
-
-import org.contacomigo.service.events.repository.ScheduleRepository;
+import org.contacomigo.service.events.service.ScheduleService;
 import org.contacomigo.service.events.web.rest.util.HeaderUtil;
 import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
@@ -28,10 +27,10 @@ public class ScheduleResource {
 
     private static final String ENTITY_NAME = "schedule";
         
-    private final ScheduleRepository scheduleRepository;
+    private final ScheduleService scheduleService;
 
-    public ScheduleResource(ScheduleRepository scheduleRepository) {
-        this.scheduleRepository = scheduleRepository;
+    public ScheduleResource(ScheduleService scheduleService) {
+        this.scheduleService = scheduleService;
     }
 
     /**
@@ -48,7 +47,7 @@ public class ScheduleResource {
         if (schedule.getId() != null) {
             return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(ENTITY_NAME, "idexists", "A new schedule cannot already have an ID")).body(null);
         }
-        Schedule result = scheduleRepository.save(schedule);
+        Schedule result = scheduleService.save(schedule);
         return ResponseEntity.created(new URI("/api/schedules/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
             .body(result);
@@ -70,7 +69,7 @@ public class ScheduleResource {
         if (schedule.getId() == null) {
             return createSchedule(schedule);
         }
-        Schedule result = scheduleRepository.save(schedule);
+        Schedule result = scheduleService.save(schedule);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, schedule.getId().toString()))
             .body(result);
@@ -85,8 +84,7 @@ public class ScheduleResource {
     @Timed
     public List<Schedule> getAllSchedules() {
         log.debug("REST request to get all Schedules");
-        List<Schedule> schedules = scheduleRepository.findAll();
-        return schedules;
+        return scheduleService.findAll();
     }
 
     /**
@@ -97,9 +95,9 @@ public class ScheduleResource {
      */
     @GetMapping("/schedules/{id}")
     @Timed
-    public ResponseEntity<Schedule> getSchedule(@PathVariable Long id) {
+    public ResponseEntity<Schedule> getSchedule(@PathVariable String id) {
         log.debug("REST request to get Schedule : {}", id);
-        Schedule schedule = scheduleRepository.findOne(id);
+        Schedule schedule = scheduleService.findOne(id);
         return ResponseUtil.wrapOrNotFound(Optional.ofNullable(schedule));
     }
 
@@ -111,9 +109,9 @@ public class ScheduleResource {
      */
     @DeleteMapping("/schedules/{id}")
     @Timed
-    public ResponseEntity<Void> deleteSchedule(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteSchedule(@PathVariable String id) {
         log.debug("REST request to delete Schedule : {}", id);
-        scheduleRepository.delete(id);
+        scheduleService.delete(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
     }
 
